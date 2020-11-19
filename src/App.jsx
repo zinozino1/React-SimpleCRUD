@@ -1,53 +1,79 @@
-import React from "react";
+import React, { useState, useReducer } from "react";
+import { useEffect } from "react";
+import { useMemo } from "react";
+import { useCallback } from "react";
+import { useRef } from "react";
+import styled, { css } from "styled-components";
+import TodoTemplate from "./components/TodoTemplate";
+import TodosData from "./constant";
+import TodoList from "./components/TodoList";
+import TodoInsert from "./components/TodoInsert";
 
-import { useState } from "react";
-import PhoneForm from "./components/PhoneForm";
-import PhoneInfoList from "./components/PhoneInfoList";
-
-const App = () => {
-    const [state, setState] = useState({ information: [] });
-    const [id, setId] = useState(0);
-
-    const handleCreate = ({ name, phone }) => {
-        setState({
-            ...state,
-            information: state.information.concat({
-                id,
-                name,
-                phone,
-            }),
-        });
-        setId(id + 1);
-    };
-
-    const handleUpdate = ({ _id, name, phone }) => {
-        setState({
-            ...state,
-            information: state.information.map((v) => {
-                if (v.id === _id) {
-                    return { id: _id, name, phone };
+const reducer = (state, action) => {
+    switch (action.type) {
+        case "CREATE":
+            return state.concat({
+                id: action.nextId,
+                text: action.input,
+                checked: false,
+            });
+        case "DELETE":
+            return state.filter((v, i) => {
+                return v.id !== action.id;
+            });
+        case "TOGGLE":
+            return state.map((v, i) => {
+                if (v.id === action.id) {
+                    return { id: v.id, text: v.text, checked: !v.checked };
                 }
                 return v;
-            }),
-        });
+            });
+        case "UPDATE":
+            return state.map((v, i) => {
+                if (v.id === action.id) {
+                    return { id: v.id, text: action.input };
+                }
+                return v;
+            });
+
+        default:
+            return state;
+    }
+};
+
+const App = () => {
+    const nextId = useRef(4); // 렌더링될 필요가 없기 때문에 useState가 아닌 useRef로 관리
+
+    const [state, dispatch] = useReducer(reducer, TodosData);
+
+    const handleCreate = (input) => {
+        // nextId가 계속 바뀌므로 usecallback x
+        dispatch({ type: "CREATE", input, nextId: nextId.current });
+        nextId.current += 1;
     };
-    const handleDelete = ({ _id }) => {
-        setState({
-            ...state,
-            information: state.information.filter((v) => {
-                return v.id !== _id;
-            }),
-        });
+
+    const handleDelete = useCallback((id) => {
+        //
+        dispatch({ type: "DELETE", id });
+    }, []);
+
+    const handleToggle = useCallback((id) => {
+        dispatch({ type: "TOGGLE", id });
+    });
+
+    const handleUpdate = (input, id) => {
+        dispatch({ type: "UPDATE", input, id });
     };
 
     return (
         <div className="App">
-            <PhoneForm handleCreate={handleCreate}></PhoneForm>
-            <PhoneInfoList
-                data={state.information}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-            ></PhoneInfoList>
+            <TodoTemplate
+                todos={state}
+                handleCreate={handleCreate}
+                handleDelete={handleDelete}
+                handleToggle={handleToggle}
+                handleUpdate={handleUpdate}
+            ></TodoTemplate>
         </div>
     );
 };
