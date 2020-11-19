@@ -1,3 +1,3 @@
-### React Simple CRUD
+# React Simple CRUD
 
-## 전화번호부 구현
+### TODO list 구현
