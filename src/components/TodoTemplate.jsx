@@ -11,9 +11,9 @@ const StyledTemplate = styled.div`
     margin: auto;
     width: 600px;
     margin-top: 6rem;
-    overflow: hidden;
+    overflow: auto;
     border-radius: 5px;
-    /* height: 700px; */
+    height: 700px;
 `;
 
 const StyledTitle = styled.div`

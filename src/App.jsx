@@ -41,16 +41,24 @@ const reducer = (state, action) => {
     }
 };
 
+const createBulkTodo = () => {
+    const arr = [];
+
+    for (let i = 0; i < 5000; i++) {
+        arr.push({ id: i, text: "hi", checked: false });
+    }
+    return arr;
+};
+
 const App = () => {
     const nextId = useRef(4); // 렌더링될 필요가 없기 때문에 useState가 아닌 useRef로 관리
 
     const [state, dispatch] = useReducer(reducer, TodosData);
 
-    const handleCreate = (input) => {
-        // nextId가 계속 바뀌므로 usecallback x
+    const handleCreate = useCallback((input) => {
         dispatch({ type: "CREATE", input, nextId: nextId.current });
         nextId.current += 1;
-    };
+    }, []);
 
     const handleDelete = useCallback((id) => {
         //
@@ -59,11 +67,11 @@ const App = () => {
 
     const handleToggle = useCallback((id) => {
         dispatch({ type: "TOGGLE", id });
-    });
+    }, []);
 
-    const handleUpdate = (input, id) => {
+    const handleUpdate = useCallback((input, id) => {
         dispatch({ type: "UPDATE", input, id });
-    };
+    }, []);
 
     return (
         <div className="App">

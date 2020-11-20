@@ -8,7 +8,11 @@ import styled, { css } from "styled-components";
 const StyledItem = styled.div`
     display: flex;
     padding: 15px;
-    background: ${({ isEven }) => isEven && "#f7ffd8"};
+    /* background: ${({ isEven }) => isEven && "#f7ffd8"}; */
+    &:nth-child(even) {
+        background: #f7ffd8;
+    }
+    /* 중요 */
 `;
 
 const StyledContentContainer = styled.div`
@@ -75,15 +79,16 @@ const TodoListItem = ({
     const [editing, setEditing] = useState(false);
     const [editInput, setEditInput] = useState("");
 
-    const onDelete = useCallback((e) => {
+    const onDelete = (e) => {
         handleDelete(data.id);
-    });
+    };
 
-    const onToggle = useCallback((e) => {
+    const onToggle = (e) => {
         handleToggle(data.id);
-    });
+    };
 
     const onEditUpdate = (e) => {
+        setEditInput(data.text);
         setEditing(!editing);
     };
 
@@ -146,4 +151,4 @@ const TodoListItem = ({
     );
 };
 
-export default TodoListItem;
+export default React.memo(TodoListItem);

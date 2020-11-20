@@ -13,7 +13,6 @@ const TodoList = ({ todos, handleDelete, handleToggle, handleUpdate }) => {
                 <TodoListItem
                     key={v.id}
                     data={v}
-                    isEven={i % 2 === 0}
                     handleDelete={handleDelete}
                     handleToggle={handleToggle}
                     handleUpdate={handleUpdate}
@@ -23,4 +22,4 @@ const TodoList = ({ todos, handleDelete, handleToggle, handleUpdate }) => {
     );
 };
 
-export default TodoList;
+export default React.memo(TodoList);
